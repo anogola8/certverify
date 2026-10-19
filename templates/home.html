@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}CertVerify — Instant Credential Verification{% endblock %}
+
+{% block content %}
+<!-- Hero Section (Dark Gradient) -->
+<section class="hero-section py-5 border-bottom">
+  <div class="container py-5 text-center">
+    
+    <div class="badge bg-success bg-opacity-25 text-success border border-success rounded-pill px-3 py-2 mb-4">
+      <i class="fa-solid fa-lock me-1"></i> Cryptographically Secured Ledger
+    </div>
+
+    <h1 class="display-4 fw-bold mb-4 text-white">
+      Stop certificate fraud. <br>
+      <span class="text-success" id="typewriter">Verify in seconds.</span>
+    </h1>
+    
+    <p class="lead text-muted mx-auto mb-5" style="max-width: 700px;">
+      CertVerify uses Ed25519 cryptography and forensic image analysis to instantly validate academic degrees, transcripts, and professional licenses.
+    </p>
+
+    <!-- Big Search Box -->
+    <div class="mx-auto p-2 bg-white rounded-4 shadow-lg" style="max-width: 800px;">
+      <form action="/verify/" method="GET" class="d-flex flex-column flex-sm-row gap-2">
+        <input type="text" class="form-control form-control-lg border-0 bg-light" placeholder="Enter Certificate ID (e.g. CV-UON-000001)">
+        <a href="/verify/" class="btn btn-success btn-lg px-4 rounded-3">
+          <i class="fa-solid fa-cloud-arrow-up me-2"></i> Upload Scan
+        </a>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5">
+  <div class="container">
+    <div class="row text-center g-4">
+      <div class="col-6 col-md-3">
+        <div class="card border-0 py-4 h-100 rounded-4">
+          <h2 class="display-5 fw-bold text-dark mb-1">{{ cert_count }}</h2>
+          <p class="text-muted text-uppercase small fw-bold mb-0">Certificates Secured</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 py-4 h-100 rounded-4">
+          <h2 class="display-5 fw-bold text-dark mb-1">{{ institution_count }}</h2>
+          <p class="text-muted text-uppercase small fw-bold mb-0">Institutions</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 py-4 h-100 rounded-4">
+          <h2 class="display-5 fw-bold text-success mb-1">100%</h2>
+          <p class="text-muted text-uppercase small fw-bold mb-0">Ledger Uptime</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 py-4 h-100 rounded-4">
+          <h2 class="display-5 fw-bold text-dark mb-1">&lt; 1s</h2>
+          <p class="text-muted text-uppercase small fw-bold mb-0">Verification Time</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+  <div class="container py-4">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold text-dark">How CertVerify Works</h2>
+      <p class="text-muted">Two powerful layers of security to ensure a document is exactly what it claims to be.</p>
+    </div>
+    
+    <div class="row g-4 justify-content-center">
+      <!-- Feature 1 -->
+      <div class="col-md-5">
+        <div class="card h-100 p-4 hover-lift rounded-4 border-0">
+          <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center mb-4 shadow-sm" style="width: 60px; height: 60px; font-size: 1.5rem;">
+            <i class="fa-solid fa-link"></i>
+          </div>
+          <h3 class="h4 fw-bold text-dark">1. Hash-Chain Ledger Lookup</h3>
+          <p class="text-muted mb-0">
+            For certificates issued after onboarding, we check the unique digital fingerprint against our immutable ledger. If even a single character is altered, the signature fails instantly.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Feature 2 -->
+      <div class="col-md-5">
+        <div class="card h-100 p-4 hover-lift rounded-4 border-0">
+          <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mb-4 shadow-sm" style="width: 60px; height: 60px; font-size: 1.5rem;">
+            <i class="fa-solid fa-magnifying-glass-chart"></i>
+          </div>
+          <h3 class="h4 fw-bold text-dark">2. Forensic Image Analysis</h3>
+          <p class="text-muted mb-0">
+            For older documents or third-party scans, our OpenCV pipeline analyzes compression levels, metadata anomalies, and copy-move forgery to detect Photoshop tampering.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Bulk Verification — CertVerify{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      
+      <div class="text-center mb-5">
+        <h1 class="fw-bold"><i class="fa-solid fa-file-csv text-success me-2"></i>Bulk Verification</h1>
+        <p class="lead text-muted">Upload a CSV file containing a list of Certificate IDs (one per line) to verify an entire batch instantly.</p>
+      </div>
+
+      <!-- Upload Form -->
+      <div class="card border-0 shadow-sm rounded-4 mb-5">
+        <div class="card-body p-4">
+          <form method="post" enctype="multipart/form-data" class="d-flex gap-3 align-items-center">
+            {% csrf_token %}
+            <input type="file" name="csv_file" accept=".csv" class="form-control form-control-lg" required>
+            <button type="submit" class="btn btn-success btn-lg px-5 rounded-pill">Verify Batch</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Results -->
+      {% if results %}
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="card-header bg-dark text-white p-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Batch Results ({{ results|length }} records)</h5>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="ps-4">Certificate ID</th>
+                  <th>Holder Name</th>
+                  <th>Status</th>
+                  <th class="pe-4">Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in results %}
+                <tr>
+                  <td class="ps-4 font-monospace">{{ row.id }}</td>
+                  <td class="fw-bold">{{ row.holder }}</td>
+                  <td>
+                    <span class="badge {% if row.valid %}bg-success{% else %}bg-danger{% endif %}">
+                      {{ row.status }}
+                    </span>
+                  </td>
+                  <td class="pe-4 text-muted small">{{ row.reason }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}

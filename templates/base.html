@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CertVerify — Trusted Credential Verification</title>
+  
+  <link rel="stylesheet" href="/static/vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/vendor/fontawesome/all.min.css">
+  <link rel="stylesheet" href="/static/css/icons.css">
+  <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body class="bg-light d-flex flex-column min-vh-100">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="/">
+        <i class="fa-solid fa-shield-halved text-success"></i> CertVerify
+      </a>
+      <div class="d-flex gap-3 align-items-center">
+                <a href="/verify/" class="btn btn-outline-light btn-sm">Verify</a>
+        <a href="/bulk-verify/" class="btn btn-outline-light btn-sm">Bulk Verify</a>
+        <a href="/institutions/" class="btn btn-outline-light btn-sm">Registry</a>
+        <a href="/revocations/" class="btn btn-outline-danger btn-sm">Revocations</a>
+        <a href="/api/docs/" class="btn btn-outline-light btn-sm">API</a>
+        
+        {% if user.is_authenticated %}
+          <div class="vr text-white-50 mx-1"></div>
+          <a href="/dashboard/" class="btn btn-success btn-sm">Dashboard</a>
+          <form method="post" action="/logout/" class="d-inline m-0">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+          </form>
+        {% else %}
+          <div class="vr text-white-50 mx-1"></div>
+          <a href="/login/" class="btn btn-light btn-sm">Issuer Login</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-grow-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white text-center py-3 mt-auto">
+    <p class="mb-0">&copy; 2026 CertVerify. Secure Verification.</p>
+  </footer>
+
+  <script src="/static/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+  <script src="/static/js/main.js"></script>
+</body>
+</html>
+

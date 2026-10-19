@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Certificate Details — CertVerify{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      
+      <!-- Success Alert -->
+      <div class="alert alert-success d-flex align-items-center mb-4 rounded-4 shadow-sm" role="alert">
+        <i class="fa-solid fa-circle-check fs-4 me-3"></i>
+        <div>
+          <h4 class="alert-heading fw-bold mb-1">Certificate Issued Successfully!</h4>
+          <p class="mb-0">The certificate has been cryptographically signed and added to the immutable ledger.</p>
+        </div>
+      </div>
+
+      <div class="card shadow border-0 rounded-4 overflow-hidden">
+        <div class="card-header bg-dark text-white p-4 d-flex justify-content-between align-items-center">
+          <h3 class="mb-0"><i class="fa-solid fa-file-contract me-2"></i>{{ cert.certificate_id }}</h3>
+          <span class="badge bg-success">Chain Index #{{ cert.chain_index }}</span>
+        </div>
+        
+        <div class="card-body p-4 bg-white">
+          <div class="row g-4">
+            <!-- Left Side: Details -->
+            <div class="col-md-7">
+              <h5 class="fw-bold text-muted mb-3">Certificate Details</h5>
+              
+              <div class="mb-3">
+                <label class="text-muted small fw-bold text-uppercase">Holder Name</label>
+                <p class="fs-5 fw-bold mb-0">{{ cert.holder_name }}</p>
+              </div>
+              
+              <div class="mb-3">
+                <label class="text-muted small fw-bold text-uppercase">Award</label>
+                <p class="fs-6 mb-0">{{ cert.award }}</p>
+              </div>
+
+              <div class="row">
+                <div class="col-6 mb-3">
+                  <label class="text-muted small fw-bold text-uppercase">Institution</label>
+                  <p class="mb-0">{{ cert.institution.name }}</p>
+                </div>
+                <div class="col-6 mb-3">
+                  <label class="text-muted small fw-bold text-uppercase">Date Issued</label>
+                  <p class="mb-0">{{ cert.issued_at|date:"d M Y, H:i" }}</p>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="text-muted small fw-bold text-uppercase">Cryptographic Hash (SHA-256)</label>
+                <div class="input-group">
+                  <input type="text" class="form-control form-control-sm bg-light font-monospace" value="{{ cert.hash }}" readonly>
+                  <button class="btn btn-outline-secondary btn-sm copy-btn" data-copy="{{ cert.hash }}" type="button"><i class="fa-regular fa-copy"></i></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side: QR Code -->
+            <div class="col-md-5 text-center">
+              <h5 class="fw-bold text-muted mb-3">Verification QR</h5>
+              {% if cert.qr_code %}
+                <img src="{{ cert.qr_code.url }}" alt="QR Code" class="img-fluid border rounded-3 p-2 mb-3" style="max-width: 200px;">
+              {% endif %}
+              <p class="small text-muted mb-0">Scan to verify instantly.</p>
+            </div>
+          </div>
+          
+          <hr class="my-4">
+
+          <!-- Actions -->
+          <div class="d-flex flex-wrap gap-3 justify-content-center">
+            {% if cert.pdf_certificate %}
+              <a href="{{ cert.pdf_certificate.url }}" class="btn btn-success btn-lg rounded-pill px-4">
+                <i class="fa-solid fa-download me-2"></i> Download PDF Certificate
+              </a>
+            {% else %}
+              <div class="alert alert-warning py-2 mb-0">PDF generation is still processing. Refresh in a moment.</div>
+            {% endif %}
+            
+                        <a href="/static/offline_verify.py" download class="btn btn-outline-dark btn-lg rounded-pill px-4">
+              <i class="fa-solid fa-terminal me-2"></i> Download Verifier Script
+            </a>
+    <a href="{{ verify_url }}" target="_blank" class="btn btn-outline-dark btn-lg rounded-pill px-4">
+              <i class="fa-solid fa-arrow-up-right-from-square me-2"></i> Public Verify Page
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <a href="/issue/" class="text-decoration-none text-muted">
+          <i class="fa-solid fa-plus-circle me-1"></i> Issue another certificate
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+

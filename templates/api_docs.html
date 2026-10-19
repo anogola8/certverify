@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}API Documentation — CertVerify{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      
+      <h1 class="fw-bold mb-4"><i class="fa-solid fa-code text-success me-2"></i>Verification API</h1>
+      <p class="lead text-muted mb-5">Integrate CertVerify into your HR software, admissions portal, or ATS system. Check certificate validity instantly.</p>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-bottom p-4">
+          <h4 class="mb-0 fw-bold">Verify a Certificate</h4>
+        </div>
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="badge bg-success rounded-0 px-3 py-2 fw-bold">GET</span>
+            <code class="fs-5 text-dark">/api/v1/verify/&lt;certificate_id&gt;/</code>
+          </div>
+          
+          <p class="text-muted">Returns the full cryptographic proof and validity status of a certificate.</p>
+
+          <h6 class="fw-bold mt-4 mb-3">Example Request (cURL):</h6>
+          <div class="bg-dark text-light p-3 rounded-3 font-monospace small position-relative mb-4">
+            <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2 copy-btn" data-copy="curl http://localhost:8000/api/v1/verify/CV-UON-000001/">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+            curl http://localhost:8000/api/v1/verify/CV-UON-000001/
+          </div>
+
+          <h6 class="fw-bold mt-4 mb-3">Example Success Response:</h6>
+          <div class="bg-light p-3 rounded-3 font-monospace small">
+<pre class="mb-0">
+{
+  "found": true,
+  "certificate_id": "CV-UON-000001",
+  "holder_name": "Alice Wanjiru",
+  "institution": "UON",
+  "award": "Bachelor of Science in Computer Science",
+  "chain_intact": true,
+  "signature_valid": true,
+  "revoked": false,
+  "is_valid": true
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom p-4">
+          <h4 class="mb-0 fw-bold">Ledger Status</h4>
+        </div>
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="badge bg-success rounded-0 px-3 py-2 fw-bold">GET</span>
+            <code class="fs-5 text-dark">/api/v1/chain/</code>
+          </div>
+          <p class="text-muted mb-0">Returns the overall health of the hash-chain ledger (total certificates, intact vs tampered).</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

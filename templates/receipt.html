@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Verification Receipt — CertVerify{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      
+      <!-- Signature Status Banner -->
+      <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-4 text-center
+        {% if sig_ok %}bg-success text-white{% else %}bg-danger text-white{% endif %}">
+        <div class="card-body p-5">
+          {% if sig_ok %}
+            <i class="fa-solid fa-shield-check display-3 mb-3"></i>
+            <h1 class="display-5 fw-bold mb-2">Receipt Verified</h1>
+            <p class="lead mb-0">This forensic report was signed by the CertVerify server and has not been altered.</p>
+          {% else %}
+            <i class="fa-solid fa-triangle-exclamation display-3 mb-3"></i>
+            <h1 class="display-5 fw-bold mb-2">Invalid Signature</h1>
+            <p class="lead mb-0">The cryptographic signature does not match. This receipt has been tampered with.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Details Card -->
+      <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-header bg-dark text-white p-4">
+          <h4 class="mb-0"><i class="fa-solid fa-file-contract me-2"></i>Receipt Details</h4>
+        </div>
+        <div class="card-body p-4 bg-white">
+          <div class="row g-4">
+            <div class="col-md-6">
+              <label class="text-muted small fw-bold text-uppercase">Receipt ID</label>
+              <p class="font-monospace mb-0">{{ receipt.id }}</p>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted small fw-bold text-uppercase">Issued At</label>
+              <p class="mb-0">{{ receipt.issued_at|date:"d M Y, H:i" }}</p>
+            </div>
+
+            <div class="col-md-6">
+              <label class="text-muted small fw-bold text-uppercase">Verdict</label>
+              <p class="fw-bold {% if receipt.verdict == 'authentic' %}text-success{% else %}text-danger{% endif %} mb-0">
+                {{ receipt.verdict|upper }}
+              </p>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted small fw-bold text-uppercase">Confidence</label>
+              <p class="mb-0">{{ receipt.confidence }}</p>
+            </div>
+
+            <div class="col-12">
+              <label class="text-muted small fw-bold text-uppercase">Document Fingerprint (SHA-256)</label>
+              <div class="input-group">
+                <input type="text" class="form-control form-control-sm bg-light font-monospace" value="{{ receipt.document_fingerprint }}" readonly>
+                <button class="btn btn-outline-secondary btn-sm copy-btn" data-copy="{{ receipt.document_fingerprint }}"><i class="fa-regular fa-copy"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cryptographic Proof -->
+      <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-header bg-light p-4">
+          <h5 class="mb-0"><i class="fa-solid fa-key text-success me-2"></i>Cryptographic Proof</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="mb-3">
+            <label class="text-muted small fw-bold text-uppercase">Server Public Key (Ed25519)</label>
+            <div class="font-monospace text-break small bg-light p-2 rounded border">{{ receipt.signed_by_key }}</div>
+          </div>
+          <div>
+            <label class="text-muted small fw-bold text-uppercase">Signature (Base64)</label>
+            <div class="font-monospace text-break small bg-light p-2 rounded border">{{ receipt.signature }}</div>
+          </div>
+        </div>
+      </div>
+
+      {% if receipt.pdf_file %}
+        <div class="text-center mt-4">
+          <a href="{{ receipt.pdf_file.url }}" class="btn btn-dark btn-lg rounded-pill px-5">
+            <i class="fa-solid fa-download me-2"></i> Download PDF Receipt
+          </a>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+Django>=5.0
+djangorestframework
+django-simple-history
+Pillow
+opencv-python-headless
+qrcode[pil]
+exifread
+cryptography
+reportlab
+python-dotenv
+gunicorn
+whitenoise

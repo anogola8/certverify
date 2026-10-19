@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Verification Result — CertVerify{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+
+      {% if not found %}
+        <!-- Not Found State -->
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden text-center">
+          <div class="card-header bg-danger text-white p-5 border-0">
+            <i class="fa-solid fa-triangle-exclamation display-1 mb-3"></i>
+            <h1 class="display-5 fw-bold mb-0">Record Not Found</h1>
+          </div>
+          <div class="card-body p-5 bg-white">
+            <h4 class="mb-3">We couldn't find <strong>{{ queried_id }}</strong> on the ledger.</h4>
+            <p class="text-muted mb-4">This could mean the certificate is fake, issued by an institution not yet onboarded, or the ID was typed incorrectly.</p>
+            <a href="/verify/" class="btn btn-dark btn-lg rounded-pill px-5">Try Forensic Upload</a>
+          </div>
+        </div>
+      {% else %}
+
+        <!-- Verification Badge -->
+        <div class="text-center mb-5">
+          {% if revoked %}
+            <div class="d-inline-block bg-danger text-white rounded-circle mb-3 d-flex align-items-center justify-content-center shadow" style="width: 100px; height: 100px;">
+              <i class="fa-solid fa-ban fa-3x"></i>
+            </div>
+            <h1 class="fw-bold text-danger">CERTIFICATE REVOKED</h1>
+            <p class="lead text-danger">This certificate has been invalidated by the issuing institution.</p>
+          {% elif chain_ok and sig_ok %}
+            <div class="d-inline-block bg-success text-white rounded-circle mb-3 d-flex align-items-center justify-content-center shadow" style="width: 100px; height: 100px;">
+              <i class="fa-solid fa-check fa-4x"></i>
+            </div>
+            <h1 class="fw-bold text-success">VERIFIED AUTHENTIC</h1>
+            <p class="lead text-muted">The cryptographic proof is valid and the record is intact.</p>
+          {% else %}
+            <div class="d-inline-block bg-danger text-white rounded-circle mb-3 d-flex align-items-center justify-content-center shadow" style="width: 100px; height: 100px;">
+              <i class="fa-solid fa-triangle-exclamation fa-3x"></i>
+            </div>
+            <h1 class="fw-bold text-danger">TAMPERING DETECTED</h1>
+            <p class="lead text-danger">The database record has been altered. The signature or hash chain is broken.</p>
+          {% endif %}
+        </div>
+
+        <!-- Certificate Details -->
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+          <div class="card-header bg-dark text-white p-4 d-flex justify-content-between align-items-center">
+            <h4 class="mb-0"><i class="fa-solid fa-file-contract me-2"></i>{{ cert.certificate_id }}</h4>
+            {% if revoked %}
+              <span class="badge bg-danger">Revoked</span>
+            {% elif chain_ok and sig_ok %}
+              <span class="badge bg-success">Valid</span>
+            {% else %}
+              <span class="badge bg-danger">Tampered</span>
+            {% endif %}
+          </div>
+          
+          <div class="card-body p-5 bg-white">
+            <div class="row">
+              <div class="col-md-7">
+                <div class="mb-4">
+                  <label class="text-muted small fw-bold text-uppercase">Holder Name</label>
+                  <h3 class="fw-bold mb-0">{{ cert.holder_name }}</h3>
+                </div>
+
+                <div class="mb-4">
+                  <label class="text-muted small fw-bold text-uppercase">Award</label>
+                  <h5 class="mb-0">{{ cert.award }}</h5>
+                  <p class="text-muted">{{ cert.programme }} | {{ cert.year_of_award }}</p>
+                </div>
+
+                <div class="mb-4">
+                  <label class="text-muted small fw-bold text-uppercase">Issuing Institution</label>
+                  <div class="d-flex align-items-center gap-2 mt-1">
+                    <div class="bg-dark text-white rounded p-2 fw-bold" style="font-size: 0.9rem;">{{ cert.institution.code }}</div>
+                    <span class="fs-5 fw-bold">{{ cert.institution.name }}</span>
+                  </div>
+                </div>
+
+                <div class="row mt-5">
+                  <div class="col-6">
+                    <label class="text-muted small fw-bold text-uppercase d-block">Chain Integrity</label>
+                    {% if chain_ok %}
+                      <span class="text-success"><i class="fa-solid fa-check-circle me-1"></i> Intact</span>
+                    {% else %}
+                      <span class="text-danger"><i class="fa-solid fa-xmark-circle me-1"></i> Broken</span>
+                    {% endif %}
+                  </div>
+                  <div class="col-6">
+                    <label class="text-muted small fw-bold text-uppercase d-block">Signature</label>
+                    {% if sig_ok %}
+                      <span class="text-success"><i class="fa-solid fa-check-circle me-1"></i> Valid</span>
+                    {% else %}
+                      <span class="text-danger"><i class="fa-solid fa-xmark-circle me-1"></i> Invalid</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-5 text-center border-start">
+                <label class="text-muted small fw-bold text-uppercase mb-3">Certificate QR</label>
+                {% if cert.qr_code %}
+                  <img src="{{ cert.qr_code.url }}" alt="QR" class="img-fluid border rounded-3 p-2 mb-3" style="max-width: 200px;">
+                {% endif %}
+                
+                <label class="text-muted small fw-bold text-uppercase mb-2">Verify Offline</label>
+                <p class="small text-muted">The public key for {{ cert.institution.code }} is available in the <a href="/institutions/">Institution Registry</a>.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-footer bg-light p-4 border-0 text-center">
+            <a href="{{ verify_url }}" class="btn btn-outline-dark rounded-pill px-4">Download PDF Certificate</a>
+            <a href="/verify/" class="btn btn-success rounded-pill px-4 ms-2">Verify Another</a>
+          </div>
+        </div>
+
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Public Registry — CertVerify{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      
+      <div class="text-center mb-5">
+        <h1 class="fw-bold"><i class="fa-solid fa-building-columns text-success me-2"></i>Trusted Institution Registry</h1>
+        <p class="lead text-muted">These institutions are onboarded to the CertVerify network. You can use their public keys to verify certificates offline.</p>
+      </div>
+
+      <div class="row g-4">
+        {% for inst in institutions %}
+        <div class="col-md-6">
+          <div class="card shadow-sm h-100 border-0 rounded-4">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="bg-dark text-white rounded d-flex align-items-center justify-content-center fw-bold" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                    {{ inst.code }}
+                  </div>
+                  <div>
+                    <h5 class="mb-0 fw-bold">{{ inst.name }}</h5>
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill mt-1">Verified Issuer</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mt-4">
+                <label class="text-muted small fw-bold text-uppercase mb-1">Ed25519 Public Key</label>
+                <div class="input-group">
+                  <input type="text" class="form-control form-control-sm font-monospace bg-light" value="{{ inst.public_key }}" readonly>
+                  <button class="btn btn-outline-secondary btn-sm copy-btn" data-copy="{{ inst.public_key }}" type="button">
+                    <i class="fa-regular fa-copy"></i>
+                  </button>
+                </div>
+                <div class="form-text mt-2">
+                  <i class="fa-solid fa-circle-check text-success"></i> Issued {{ inst.certificates.count }} certificates
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+          <i class="fa-solid fa-folder-open display-1 text-muted mb-3"></i>
+          <h4 class="text-muted">No institutions onboarded yet.</h4>
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

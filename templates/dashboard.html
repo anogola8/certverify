@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Issuer Dashboard — CertVerify{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <div>
+      <h2 class="fw-bold mb-0">Issuer Dashboard</h2>
+      <p class="text-muted mb-0">{% if institution %}{{ institution.name }}{% else %}Super Admin View{% endif %}</p>
+    </div>
+    <a href="/dashboard/issue/" class="btn btn-success btn-lg rounded-pill px-4">
+      <i class="fa-solid fa-plus me-2"></i> Issue Certificate
+    </a>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-4">Certificate ID</th>
+            <th>Holder</th>
+            <th>Award</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th class="pe-4 text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cert in certs %}
+          <tr>
+            <td class="ps-4 font-monospace">{{ cert.certificate_id }}</td>
+            <td class="fw-bold">{{ cert.holder_name }}</td>
+            <td>{{ cert.award|truncatechars:30 }}</td>
+            <td>{{ cert.issued_at|date:"d M Y" }}</td>
+            <td>
+              {% if cert.revoked %}
+                <span class="badge bg-danger">Revoked</span>
+              {% else %}
+                <span class="badge bg-success">Active</span>
+              {% endif %}
+            </td>
+            <td class="pe-4 text-end">
+              <a href="/certificate/{{ cert.certificate_id }}/" class="btn btn-sm btn-outline-dark">View</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="text-center py-5 text-muted">No certificates issued yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

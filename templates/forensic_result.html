@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Forensic Report — CertVerify{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+
+      <!-- Verdict Banner -->
+      <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-5">
+        <div class="card-header border-0 p-5 text-center
+          {% if result.verdict == 'authentic' %}bg-success text-white
+          {% elif result.verdict == 'tampered' %}bg-danger text-white
+          {% else %}bg-warning text-dark{% endif %}">
+          
+          <h1 class="display-5 fw-bold mb-2">
+            {% if result.verdict == 'authentic' %}
+              <i class="fa-solid fa-shield-check me-2"></i> Likely Authentic
+            {% elif result.verdict == 'tampered' %}
+              <i class="fa-solid fa-triangle-exclamation me-2"></i> Tampering Detected
+            {% else %}
+              <i class="fa-solid fa-circle-question me-2"></i> Inconclusive
+            {% endif %}
+          </h1>
+          <p class="mb-0 fs-5">Confidence Score: <strong>{{ result.overall_confidence }} / 1.0</strong> (Higher means higher suspicion)</p>
+        </div>
+      </div>
+
+      <!-- Score Cards -->
+      <div class="row g-4 mb-5">
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm rounded-4 text-center h-100 p-4">
+            <div class="mb-2"><i class="fa-solid fa-fire text-danger fs-2"></i></div>
+            <h4 class="fw-bold">ELA Analysis</h4>
+            <h2 class="text-dark fw-bold mb-0">{{ report.ela_score }}</h2>
+            <p class="text-muted small">Compression anomaly score</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm rounded-4 text-center h-100 p-4">
+            <div class="mb-2"><i class="fa-solid fa-clone text-primary fs-2"></i></div>
+            <h4 class="fw-bold">Copy-Move</h4>
+            <h2 class="text-dark fw-bold mb-0">{{ report.copy_move_score }}</h2>
+            <p class="text-muted small">Duplicated region score</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm rounded-4 text-center h-100 p-4">
+            <div class="mb-2"><i class="fa-solid fa-file-code text-success fs-2"></i></div>
+            <h4 class="fw-bold">Metadata</h4>
+            <h2 class="text-dark fw-bold mb-0">{% if report.metadata_ok %}Clean{% else %}Flagged{% endif %}</h2>
+            <p class="text-muted small">EXIF & Software tags</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visual Proofs -->
+      <div class="row g-4 mb-5">
+        {% if report.ela_image %}
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+              <div class="card-header bg-white fw-bold py-3"><i class="fa-solid fa-image text-danger me-2"></i> ELA Heatmap</div>
+              <img src="{{ report.ela_image.url }}" class="img-fluid" alt="ELA">
+              <div class="card-footer bg-white text-muted small">Bright hotspots indicate areas with different compression histories (signs of editing).</div>
+            </div>
+          </div>
+        {% endif %}
+        
+        {% if report.overlay_image %}
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+              <div class="card-header bg-white fw-bold py-3"><i class="fa-solid fa-clone text-primary me-2"></i> Copy-Move Overlay</div>
+              <img src="{{ report.overlay_image.url }}" class="img-fluid" alt="Copy-Move">
+              <div class="card-footer bg-white text-muted small">Lines connect regions with identical pixel data, indicating copy-paste forgery.</div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Receipt & Download -->
+      <div class="card border-0 shadow-lg rounded-4 bg-light">
+        <div class="card-body p-4 text-center">
+          <h5 class="fw-bold mb-3"><i class="fa-solid fa-file-shield text-success me-2"></i> Signed Verification Receipt</h5>
+          <p class="text-muted mb-4">This forensic report has been cryptographically signed by the CertVerify server. Download the PDF to retain an immutable proof of this analysis.</p>
+          
+          <div class="d-flex justify-content-center gap-3">
+            {% if receipt.pdf_file %}
+              <a href="{{ receipt.pdf_file.url }}" class="btn btn-dark btn-lg rounded-pill px-4">
+                <i class="fa-solid fa-download me-2"></i> Download PDF Receipt
+              </a>
+            {% endif %}
+            <a href="/receipt/{{ receipt.id }}/" class="btn btn-outline-dark btn-lg rounded-pill px-4">
+              <i class="fa-solid fa-globe me-2"></i> Public Receipt Link
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

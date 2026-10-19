@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Issue Certificate — CertVerify{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="mb-4">
+        <a href="/dashboard/" class="text-decoration-none text-muted"><i class="fa-solid fa-arrow-left me-2"></i>Back to Dashboard</a>
+      </div>
+      
+      <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="card-header bg-dark text-white p-4">
+          <h3 class="mb-0"><i class="fa-solid fa-certificate text-success me-2"></i>Issue New Certificate</h3>
+        </div>
+        <div class="card-body p-5 bg-white">
+          <form method="post">
+            {% csrf_token %}
+            
+            {% if institutions|length > 1 %}
+            <div class="mb-4">
+              <label class="form-label fw-bold">Institution</label>
+              <select name="institution" class="form-select form-select-lg" required>
+                {% for inst in institutions %}
+                  <option value="{{ inst.id }}">{{ inst.name }} ({{ inst.code }})</option>
+                {% endfor %}
+              </select>
+            </div>
+            {% else %}
+            <input type="hidden" name="institution" value="{{ institutions.0.id }}">
+            {% endif %}
+
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Holder Name</label>
+                <input type="text" name="holder_name" class="form-control form-control-lg" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Holder ID / Reg No</label>
+                <input type="text" name="holder_id" class="form-control form-control-lg">
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-bold">Award / Degree</label>
+                <input type="text" name="award" class="form-control form-control-lg" placeholder="e.g. Bachelor of Science in Computer Science" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Programme</label>
+                <input type="text" name="programme" class="form-control form-control-lg" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Classification</label>
+                <input type="text" name="classification" class="form-control form-control-lg" placeholder="e.g. First Class Honours">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Year of Award</label>
+                <input type="number" name="year_of_award" class="form-control form-control-lg" value="2026" required>
+              </div>
+            </div>
+
+            <div class="d-grid mt-5">
+              <button type="submit" class="btn btn-success btn-lg rounded-pill py-3 fw-bold">
+                <i class="fa-solid fa-signature me-2"></i> Sign & Issue Certificate
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

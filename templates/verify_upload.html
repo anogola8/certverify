@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Verify a Document — CertVerify{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Forensic Analysis</li>
+        </ol>
+      </nav>
+
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+        <div class="card-header bg-dark text-white p-4 border-0">
+          <h2 class="h3 fw-bold mb-1">
+            <i class="fa-solid fa-magnifying-glass-chart text-success me-2"></i>Forensic Verification
+          </h2>
+          <p class="mb-0 text-white-50">Upload a scanned certificate to detect tampering, copy-move forgery, and metadata manipulation.</p>
+        </div>
+        
+        <div class="card-body p-5 bg-white">
+          <form method="post" enctype="multipart/form-data" id="uploadForm">
+            {% csrf_token %}
+            
+            <!-- Drag and Drop Zone -->
+            <div id="dropZone" class="border border-2 border-dashed rounded-3 text-center p-5 bg-light cursor-pointer" style="cursor: pointer; transition: all 0.2s;">
+              <i class="fa-solid fa-cloud-arrow-up display-4 text-muted mb-3"></i>
+              <h5 class="fw-bold text-dark">Drag and drop your document here</h5>
+              <p class="text-muted mb-0">or click to browse</p>
+              <input type="file" name="image" id="fileInput" class="d-none" accept="image/*" required>
+            </div>
+            
+            <!-- File Preview (hidden by default) -->
+            <div id="previewContainer" class="mt-4 d-none text-center">
+              <h6 class="text-start text-muted fw-bold mb-2">Selected File:</h6>
+              <div class="p-3 bg-light rounded-3 d-flex align-items-center justify-content-between border">
+                <div class="d-flex align-items-center gap-3 text-start">
+                  <i class="fa-solid fa-file-image text-success fs-3"></i>
+                  <div>
+                    <p class="mb-0 fw-bold" id="fileName">image.png</p>
+                    <p class="mb-0 text-muted small" id="fileSize">0 KB</p>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="resetUpload()">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="text-center text-muted small mt-4">
+              Supported formats: JPG, PNG, TIFF. Max size: 10MB.
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-success btn-lg rounded-pill" id="submitBtn" disabled>
+                <i class="fa-solid fa-microscope me-2"></i> Run Forensic Analysis
+              </button>
+            </div>
+          </form>
+        </div>
+        
+        <!-- Info Footer -->
+        <div class="card-footer bg-light p-4 border-0 d-flex justify-content-between text-muted small">
+          <span><i class="fa-solid fa-shield-halved text-success me-1"></i> Secure Upload</span>
+          <span><i class="fa-solid fa-bolt text-warning me-1"></i> Takes ~2 seconds</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // We wrap this in a check so it only runs if the elements exist
+  document.addEventListener("DOMContentLoaded", () => {
+    const dropZone = document.getElementById("dropZone");
+    const fileInput = document.getElementById("fileInput");
+    const submitBtn = document.getElementById("submitBtn");
+    const previewContainer = document.getElementById("previewContainer");
+    const fileNameDisplay = document.getElementById("fileName");
+    const fileSizeDisplay = document.getElementById("fileSize");
+
+    if (!dropZone) return; // Exit if we aren't on the upload page
+
+    // Click to upload
+    dropZone.addEventListener("click", () => fileInput.click());
+
+    // Drag over styling
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.classList.add("border-success", "bg-white");
+    });
+
+    dropZone.addEventListener("dragleave", (e) => {
+      e.preventDefault();
+      dropZone.classList.remove("border-success", "bg-white");
+    });
+
+    // Handle drop
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.classList.remove("border-success", "bg-white");
+      if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        handleFileUpdate();
+      }
+    });
+
+    // Handle normal selection
+    fileInput.addEventListener("change", handleFileUpdate);
+
+    function handleFileUpdate() {
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        
+        // Update UI text
+        fileNameDisplay.textContent = file.name;
+        fileSizeDisplay.textContent = (file.size / 1024).toFixed(1) + " KB";
+        
+        // Show preview
+        previewContainer.classList.remove("d-none");
+        dropZone.classList.add("d-none"); // Hide the big drop zone
+        
+        // Enable submit
+        submitBtn.disabled = false;
+      }
+    }
+
+    // Function to clear the file and start over
+    window.resetUpload = function() {
+      fileInput.value = "";
+      previewContainer.classList.add("d-none");
+      dropZone.classList.remove("d-none");
+      submitBtn.disabled = true;
+    };
+  });
+</script>
+{% endblock %}

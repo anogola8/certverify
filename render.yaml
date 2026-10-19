@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: certverify
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn certverify.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 2
